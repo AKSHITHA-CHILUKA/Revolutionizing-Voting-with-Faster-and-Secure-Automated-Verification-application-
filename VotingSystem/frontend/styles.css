@@ -1,0 +1,73 @@
+/* General Styling */
+body {
+    font-family: 'Poppins', sans-serif;
+    text-align: center;
+    background: linear-gradient(135deg, #2c3e50, #34495e);
+    margin: 0;
+    padding: 0;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+/* Container Box */
+.container {
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.1); /* Transparent background */
+    border-radius: 12px;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+    max-width: 400px;
+    /* Apply backdrop-filter for browsers that support it */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px); /* For Safari */
+}
+
+/* Headings */
+h1 {
+    color: #f1c40f;
+    font-size: 24px;
+}
+
+p {
+    font-size: 18px;
+    margin-top: 10px;
+}
+
+/* Buttons */
+.btn {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 12px;
+    width: 80%;
+    background-color: #1abc9c;
+    color: white;
+    border: none;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+}
+
+.btn:hover {
+    background-color: #16a085;
+    transform: scale(1.05);
+}
+
+/* Red Button for Another Candidate */
+.btn-red {
+    background-color: #e74c3c;
+}
+
+.btn-red:hover {
+    background-color: #c0392b;
+}
+
+/* Fallback for browsers that don't support backdrop-filter */
+@supports not (backdrop-filter: blur(10px)) {
+    .container {
+        background: rgba(255, 255, 255, 0.1); /* Transparent background */
+    }
+}

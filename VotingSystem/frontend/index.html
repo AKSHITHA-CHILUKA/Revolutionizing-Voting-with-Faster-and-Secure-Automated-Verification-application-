@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Voting System</title>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.7.0/dist/web3.min.js"></script>
+    <script src="app.js" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            margin: 0;
+            padding: 0;
+            color: white;
+        }
+        .container {
+            margin: 50px auto;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 500px;
+            backdrop-filter: blur(10px);  /* Make sure this is supported in your browser */
+            -webkit-backdrop-filter: blur(10px);  /* Fallback for Safari */
+            background: rgba(255, 255, 255, 0.1);  /* Ensure there's some visible background */
+        }
+        h1 {
+            color: #f1c40f;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .btn {
+            display: inline-block;
+            margin: 10px;
+            padding: 12px;
+            width: 80%;
+            background-color: #1abc9c;
+            color: white;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+        }
+        .btn:hover {
+            background-color: #16a085;
+            transform: scale(1.05);
+        }
+        .btn-red {
+            background-color: #e74c3c;
+        }
+        .btn-red:hover {
+            background-color: #c0392b;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>🗳 Secure Blockchain Voting</h1>
+        <h3>Step 1: Biometric Authentication</h3>
+        
+        <!-- Label for file input -->
+        <label for="uploadImage" id="uploadLabel">Upload your biometric image</label>
+        <!-- File input for biometric image upload with title attribute for accessibility -->
+        <input type="file" id="uploadImage" accept="image/*" title="Upload a photo for biometric authentication" aria-describedby="uploadLabel">
+        
+        <button class="btn" onclick="authenticateUser()">Authenticate</button>
+        <p id="authMessage"></p>
+
+        <h3>Step 2: Cast Your Vote</h3>
+        <button class="btn" onclick="vote('Alice')">✅ Vote for Alice</button>
+        <button class="btn btn-red" onclick="vote('Bob')">🗳 Vote for Bob</button>
+    </div>
+
+    <script>
+        function authenticateUser() {
+            const fileInput = document.getElementById('uploadImage');
+            const authMessage = document.getElementById("authMessage");
+
+            // Check if a file was selected
+            if (fileInput.files.length === 0) {
+                authMessage.innerText = "❌ Please upload an image first.";
+                return;
+            }
+
+            // Simulate biometric authentication (you can later replace this with real authentication logic)
+            setTimeout(() => {
+                authMessage.innerText = "✅ Authentication Successful!";
+            }, 2000);
+        }
+
+        function vote(candidate) {
+            setTimeout(() => {
+                // Redirect to success page after voting
+                window.location.href = `success.html?candidate=${candidate}`;
+            }, 2000);
+        }
+    </script>
+
+</body>
+</html>
