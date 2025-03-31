@@ -104,10 +104,10 @@
                 if (isNewUser) {
                     authMessage.innerText = "✅ Authentication Successful! You can now vote.";
                     // Enable voting buttons
-                    voteButtons.forEach(button => {
-                        button.disabled = false;
-                        button.classList.remove('disabled');
-                    });
+                    voteAlice.disabled = false;
+                    voteBob.disabled = false;
+                    voteAlice.classList.remove('disabled');
+                    voteBob.classList.remove('disabled');
                 } else {
                     authMessage.innerText = "❌ Authentication failed: Existing user detected!";
                 }
