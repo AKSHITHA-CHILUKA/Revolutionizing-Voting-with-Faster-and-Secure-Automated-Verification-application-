@@ -57,6 +57,11 @@
         .btn-red:hover {
             background-color: #c0392b;
         }
+        /* Disabled button style */
+        .disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <body>
@@ -74,14 +79,18 @@
         <p id="authMessage"></p>
 
         <h3>Step 2: Cast Your Vote</h3>
-        <button class="btn" onclick="vote('Alice')">✅ Vote for Alice</button>
-        <button class="btn btn-red" onclick="vote('Bob')">🗳 Vote for Bob</button>
+        <!-- Initially disabled buttons -->
+        <button class="btn disabled" id="voteAlice" onclick="vote('Alice')" disabled>✅ Vote for Alice</button>
+        <button class="btn btn-red disabled" id="voteBob" onclick="vote('Bob')" disabled>🗳 Vote for Bob</button>
     </div>
 
     <script>
         function authenticateUser() {
             const fileInput = document.getElementById('uploadImage');
             const authMessage = document.getElementById("authMessage");
+            const voteButtons = document.querySelectorAll('.btn');
+            const voteAlice = document.getElementById('voteAlice');
+            const voteBob = document.getElementById('voteBob');
 
             // Check if a file was selected
             if (fileInput.files.length === 0) {
@@ -89,17 +98,39 @@
                 return;
             }
 
-            // Simulate biometric authentication (you can later replace this with real authentication logic)
+            // Simulate biometric authentication (replace this with real authentication logic)
             setTimeout(() => {
-                authMessage.innerText = "✅ Authentication Successful!";
-            }, 2000);
+                const isNewUser = checkForNewUser(fileInput.files[0]);  // This would be the logic to analyze the uploaded file
+                if (isNewUser) {
+                    authMessage.innerText = "✅ Authentication Successful! You can now vote.";
+                    // Enable voting buttons
+                    voteButtons.forEach(button => {
+                        button.disabled = false;
+                        button.classList.remove('disabled');
+                    });
+                } else {
+                    authMessage.innerText = "❌ Authentication failed: Existing user detected!";
+                }
+            }, 2000); // Simulated delay of 2 seconds
+        }
+
+        // Simulate checking if the user is new (for example, comparing against a database or record of previous biometrics)
+        function checkForNewUser(uploadedFile) {
+            // Example logic: For now, we can return `true` for new user, you would replace this with your own logic.
+            const existingUsers = ["existing_user_1", "existing_user_2"];  // Sample existing users
+            // Simulated check: If the uploaded file is a "new" biometric image, the user is new.
+            if (uploadedFile.name === "new_user_fingerprint.jpg") {
+                return true;
+            } else {
+                return false;
+            }
         }
 
         function vote(candidate) {
             setTimeout(() => {
                 // Redirect to success page after voting
                 window.location.href = `success.html?candidate=${candidate}`;
-            }, 2000);
+            }, 2000); // Simulated delay
         }
     </script>
 

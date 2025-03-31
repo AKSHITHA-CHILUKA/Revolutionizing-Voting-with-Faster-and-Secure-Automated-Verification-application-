@@ -1,72 +1,63 @@
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify
 import os
-from biometric_auth import authenticate_user
-from blockchain import cast_vote
-from encryption import encrypt_vote
-from ai_fraud_detection import detect_fraud
+import joblib
+from biometric_auth import authenticate_user  # Import your biometric authentication function
+from blockchain import cast_vote  # Blockchain voting function
+from encryption import encrypt_vote  # Encryption for vote
+from ai_fraud_detection import detect_fraud  # Fraud detection in the voting process
 
 app = Flask(__name__)
 
-# Route for Home Page
+# Config for file upload
+UPLOAD_FOLDER = './uploads'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
 @app.route('/')
 def home():
-    return "Welcome to the Secure Voting System API"
+    return "Welcome to the Secure Voting System API!"
 
-# Route for serving favicon (to avoid 404 errors)
-@app.route('/favicon.ico')
-def favicon():
-    return send_from_directory(os.path.join(app.root_path, 'static'),'favicon.ico', mimetype='image/vnd.microsoft.icon')
-
-# Route for User Authentication
 @app.route('/authenticate', methods=['POST'])
 def authenticate():
-    data = request.json
-    user_id = data.get('user_id')
-    biometric_data = data.get('biometric_data')
+    if 'biometric_data' not in request.files:
+        return jsonify({"error": "No biometric data provided"}), 400
+    
+    biometric_data = request.files['biometric_data']
+    
+    # Save the file (you can do further processing like checking the file)
+    file_path = os.path.join(app.config['UPLOAD_FOLDER'], biometric_data.filename)
+    biometric_data.save(file_path)
 
-    if not user_id or not biometric_data:
-        return jsonify({"error": "Missing user_id or biometric_data"}), 400
-
-    authenticated = authenticate_user(user_id, biometric_data)
-
-    if authenticated:
-        return jsonify({"message": "User authenticated successfully"})
+    # Perform biometric authentication
+    authentication_result = authenticate_user(file_path)
+    if authentication_result['status'] == 'success':
+        return jsonify({"status": "User authenticated successfully"}), 200
     else:
         return jsonify({"error": "Authentication failed"}), 401
 
-# Route for Casting a Vote
-@app.route('/vote', methods=['POST'])
+@app.route('/cast_vote', methods=['POST'])
 def vote():
     data = request.json
-    user_id = data.get('user_id')
-    vote_choice = data.get('vote_choice')
+    if not data or not data.get('vote'):
+        return jsonify({"error": "No vote data provided!"}), 400
+    
+    # Encrypt the vote
+    encrypted_vote = encrypt_vote(data['vote'])
+    
+    # Detect fraud (Optional)
+    fraud_detected = detect_fraud(encrypted_vote)
+    if fraud_detected:
+        return jsonify({"error": "Fraudulent voting attempt detected!"}), 403
+    
+    # Cast the vote using blockchain
+    vote_status = cast_vote(encrypted_vote)
+    if vote_status['status'] == 'success':
+        return jsonify({"status": "Vote successfully casted!"}), 200
+    else:
+        return jsonify({"error": "Vote casting failed"}), 500
 
-    if not user_id or not vote_choice:
-        return jsonify({"error": "Missing user_id or vote_choice"}), 400
-
-    encrypted_vote = encrypt_vote(vote_choice)
-    transaction_hash = cast_vote(user_id, encrypted_vote)
-
-    return jsonify({
-        "message": "Vote successfully casted",
-        "transaction_hash": transaction_hash
-    })
-
-# Route for Fraud Detection
-@app.route('/fraud-detection', methods=['POST'])
-def fraud_detection():
-    data = request.json
-    transaction_data = data.get('transaction_data')
-
-    if not transaction_data:
-        return jsonify({"error": "Missing transaction data"}), 400
-
-    fraud_detected = detect_fraud(transaction_data)
-
-    return jsonify({
-        "fraud_detected": fraud_detected
-    })
-
-# Run the Flask App
 if __name__ == '__main__':
+    # Ensure upload folder exists
+    if not os.path.exists(app.config['UPLOAD_FOLDER']):
+        os.makedirs(app.config['UPLOAD_FOLDER'])
+
     app.run(debug=True)
